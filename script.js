@@ -30,28 +30,43 @@ class Calculator {
     this.currentOperand = ''
   }
 
+  chooseOperationMath(operation) {
+    this.chooseOperation(operation)
+    this.currentOperand = 0
+    this.compute()
+  }
+
   compute() {
-    let computation
+    let result
     const prev = parseFloat(this.previousOperand)
     const current = parseFloat(this.currentOperand)
     if (isNaN(prev) || isNaN(current)) return
     switch (this.operation) {
       case '+':
-        computation = prev + current
+        result = prev + current
         break
       case '-':
-        computation = prev - current
+        result = prev - current
         break
       case '*':
-        computation = prev * current
+        result = prev * current
         break
       case '÷':
-        computation = prev / current
+        result = prev / current
+        break
+      case '1/x':
+        result = 1 / prev
+        break
+      case 'x²':
+        result = prev * prev
+        break
+      case '√':
+        result = Math.sqrt(prev)
         break
       default:
         return
     }
-    this.currentOperand = computation
+    this.currentOperand = result
     this.operation = undefined
     this.previousOperand = ''
   }
@@ -88,9 +103,11 @@ class Calculator {
 
 const numberButtons = document.querySelectorAll('[data-number]')
 const operationButtons = document.querySelectorAll('[data-operation]')
+const mathButtons = document.querySelectorAll('[data-math]')
 const equalsButton = document.querySelector('[data-equals]')
 const deleteButton = document.querySelector('[data-delete]')
 const allClearButton = document.querySelector('[data-all-clear]')
+const specialButton = document.querySelector('[data-special]')
 const previousOperandTextElement = document.querySelector('[data-previous-operand]')
 const currentOperandTextElement = document.querySelector('[data-current-operand]')
 
@@ -110,6 +127,13 @@ operationButtons.forEach(button => {
   })
 })
 
+mathButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    calculator.chooseOperationMath(button.innerText)
+    calculator.updateDisplay()
+  })
+})
+
 equalsButton.addEventListener('click', button => {
   calculator.compute()
   calculator.updateDisplay()
@@ -124,3 +148,30 @@ deleteButton.addEventListener('click', button => {
   calculator.delete()
   calculator.updateDisplay()
 })
+
+specialButton.addEventListener('click', button => {
+  document.body.classList.toggle('animated-gradient')
+  document.body.classList.toggle('radial-gradient')
+  if (document.body.classList.contains('animated-gradient')) {
+    document.removeEventListener('mousemove', handleMouseMove)
+    document.body.style.removeProperty('background')
+  }
+  else {
+    document.addEventListener('mousemove', handleMouseMove)
+  }
+})
+
+function handleMouseMove(event) {
+  var radialGradient = document.querySelector('.radial-gradient')
+  if (radialGradient == null) return
+  
+  var windowWidth = window.innerWidth
+  var windowHeight = window.innerHeight
+  
+  var mouseXpercentage = Math.round(event.pageX / windowWidth * 100)
+  var mouseYpercentage = Math.round(event.pageY / windowHeight * 100)
+  
+  radialGradient.style.background = 'radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, #3498db, #9b59b6)'
+};
+if (document.body.classList.contains('radial-gradient'))
+  document.addEventListener('mousemove', handleMouseMove)
