@@ -16,7 +16,7 @@ class Calculator {
   }
 
   appendNumber(number) {
-    if (number === '.' && this.currentOperand.includes('.')) return
+    if (number === '.' && this.currentOperand.toString().includes('.')) return
     this.currentOperand = this.currentOperand.toString() + number.toString()
   }
 
@@ -28,12 +28,10 @@ class Calculator {
     this.operation = operation
     this.previousOperand = this.currentOperand
     this.currentOperand = ''
-  }
-
-  chooseOperationMath(operation) {
-    this.chooseOperation(operation)
-    this.currentOperand = 0
-    this.compute()
+    if (operation === '1/x' || operation === 'x²' || operation === '√') {
+      this.currentOperand = 0
+      this.compute()
+    }
   }
 
   compute() {
@@ -103,7 +101,6 @@ class Calculator {
 
 const numberButtons = document.querySelectorAll('[data-number]')
 const operationButtons = document.querySelectorAll('[data-operation]')
-const mathButtons = document.querySelectorAll('[data-math]')
 const equalsButton = document.querySelector('[data-equals]')
 const deleteButton = document.querySelector('[data-delete]')
 const allClearButton = document.querySelector('[data-all-clear]')
@@ -123,13 +120,6 @@ numberButtons.forEach(button => {
 operationButtons.forEach(button => {
   button.addEventListener('click', () => {
     calculator.chooseOperation(button.innerText)
-    calculator.updateDisplay()
-  })
-})
-
-mathButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    calculator.chooseOperationMath(button.innerText)
     calculator.updateDisplay()
   })
 })
@@ -164,13 +154,10 @@ specialButton.addEventListener('click', button => {
 function handleMouseMove(event) {
   var radialGradient = document.querySelector('.radial-gradient')
   if (radialGradient == null) return
-  
   var windowWidth = window.innerWidth
   var windowHeight = window.innerHeight
-  
   var mouseXpercentage = Math.round(event.pageX / windowWidth * 100)
   var mouseYpercentage = Math.round(event.pageY / windowHeight * 100)
-  
   radialGradient.style.background = 'radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, #3498db, #9b59b6)'
 };
 if (document.body.classList.contains('radial-gradient'))
